@@ -1,0 +1,19 @@
+Model Accuracy Results
+=====================
+
+ResNet-34 Results:
+Original Test Set - Top-1 Accuracy: 76.00%, Top-5 Accuracy: 94.00%
+FGSM Attack - Top-1 Accuracy: 0.60%, Top-5 Accuracy: 3.80%
+PGD Attack - Top-1 Accuracy: 0.20%, Top-5 Accuracy: 1.00%
+Patch Attack - Top-1 Accuracy: 7.00%, Top-5 Accuracy: 10.20%
+
+DenseNet-121 Results:
+Original Test Set - Top-1 Accuracy: 75.60%, Top-5 Accuracy: 93.60%
+FGSM Attack - Top-1 Accuracy: 6.80%, Top-5 Accuracy: 11.40%
+PGD Attack - Top-1 Accuracy: 7.00%, Top-5 Accuracy: 12.00%
+Patch Attack - Top-1 Accuracy: 8.00%, Top-5 Accuracy: 12.00%
+
+Transferability Results:
+FGSM Transferability Rate: 91.25%
+PGD Transferability Rate: 90.50%
+Patch Transferability Rate: 97.97%
