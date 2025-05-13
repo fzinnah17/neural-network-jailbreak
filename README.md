@@ -11,19 +11,32 @@ This project implements and evaluates various adversarial attack methods against
 - **Transferability**: High cross-architecture vulnerability with transfer rates exceeding 90%
 - **Model Comparison**: ResNet-34 slightly more vulnerable than DenseNet-121 across all attack types
 
+## Key Results Summary
+
+| Attack Method | Parameters | ResNet-34 Accuracy |  | DenseNet-121 Accuracy |  | Modified Pixels | Transfer Rate |
+|---------------|:----------:|:------------------:|:------------------:|:---------------------:|:---------------------:|:---------------:|:-------------:|
+|               |            | Top-1 | Top-5 | Top-1 | Top-5 | L0 Norm (%) | (%) |
+| Original (Clean) | - | 76.00% | 94.00% | 75.60% | 93.60% | - | - |
+| FGSM | ε = 0.02 | 0.60% | 3.80% | 6.80% | 11.40% | 293.16% | 91.25% |
+| PGD | ε = 0.02, steps = 10 | 0.20% | 1.00% | 7.00% | 12.00% | 288.37% | 90.50% |
+| Patch | ε = 0.3, 32×32 px | 7.00% | 10.20% | 8.00% | 12.00% | 5.34% | 97.97% |
+
 ## Setup Instructions
 
-### Requirements
-- Python 3.8+
-- PyTorch 1.9+
-- torchvision
-- NumPy
-- Pandas
-- matplotlib
-- seaborn
-- tqdm
-- scikit-learn
-- Jupyter
+### Required Packages
+
+| Package | Version | Purpose |
+|---------|:-------:|---------|
+| Python | ≥ 3.8 | Programming language |
+| PyTorch | ≥ 1.9.0 | Deep learning framework |
+| torchvision | ≥ 0.10.0 | Computer vision utilities |
+| NumPy | ≥ 1.20.0 | Numerical computing |
+| Pandas | ≥ 1.3.0 | Data manipulation |
+| matplotlib | ≥ 3.4.0 | Visualization |
+| seaborn | ≥ 0.11.0 | Enhanced visualization |
+| scikit-learn | ≥ 0.24.0 | Machine learning utilities |
+| tqdm | ≥ 4.60.0 | Progress bars |
+| Jupyter | ≥ 1.0.0 | Notebook environment |
 
 ### Installation
 ```bash
@@ -74,6 +87,13 @@ DenseNet-121 Results:
 Original Test Set - Top-1 Accuracy: 75.60%, Top-5 Accuracy: 93.60%
 ```
 
+### Baseline Model Performance
+
+![Confusion Matrix](https://github.com/fzinnah17/neural-network-jailbreak/blob/main/images/clean_confusion_matrix.png)
+
+*Confusion matrix showing strong diagonal performance on clean images*
+
+
 ### FGSM Attack Results (ε = 0.02)
 
 This simple one-step attack produced dramatic accuracy reduction while maintaining imperceptible perturbations:
@@ -87,6 +107,11 @@ Relative drop in Top-1 Accuracy: 99.21%
 DenseNet-121 Results:
 FGSM Attack - Top-1 Accuracy: 6.80%, Top-5 Accuracy: 11.40%
 ```
+### FGSM Attack Results (ε = 0.02)
+
+![FGSM Attack](https://github.com/fzinnah17/neural-network-jailbreak/blob/main/images/fgsm_triplet_visualization.png)
+
+*FGSM attack visualization: Original image (left), adversarial image (center), and perturbation amplified 10× (right)*
 
 **Key Statistics:**
 - L∞ norm (maximum change): 0.0200
@@ -107,6 +132,16 @@ DenseNet-121 Results:
 PGD Attack - Top-1 Accuracy: 7.00%, Top-5 Accuracy: 12.00%
 ```
 
+### PGD Attack Results (ε = 0.02)
+
+![PGD Attack](https://github.com/fzinnah17/neural-network-jailbreak/blob/main/images/pgd_triplet_visualization.png)
+
+*PGD attack visualization showing imperceptible perturbations that create misclassification*
+
+![PGD Probability Decay](https://github.com/fzinnah17/neural-network-jailbreak/blob/main/images/pgd_probability_graph.png)
+
+*Evolution of class probabilities during PGD attack iterations*
+
 **Key Statistics:**
 - L∞ norm (maximum change): 0.0200
 - L0 norm (% pixels changed): 288.37%
@@ -126,6 +161,12 @@ DenseNet-121 Results:
 Patch Attack - Top-1 Accuracy: 8.00%, Top-5 Accuracy: 12.00%
 ```
 
+### Patch Attack Results (ε = 0.3)
+
+![Patch Attack](https://github.com/fzinnah17/neural-network-jailbreak/blob/main/images/patch_triplet_visualization.png)
+
+*Patch attack affecting only 5.34% of pixels yet causing misclassification*
+
 **Key Statistics:**
 - L∞ norm (maximum change): 0.3000
 - L0 norm (% pixels changed): 5.34%
@@ -143,6 +184,20 @@ PGD Transferability Rate: 90.50%
 Patch Transferability Rate: 97.97%
 ```
 
+## Cross-Model Transferability Matrix
+
+| Attack Generated For | Tested On | Top-1 Accuracy | Top-5 Accuracy | Transfer Success Rate |
+|----------------------|-----------|:--------------:|:--------------:|:---------------------:|
+| ResNet-34 (Original) | ResNet-34 | 76.00% | 94.00% | - |
+| ResNet-34 (FGSM) | ResNet-34 | 0.60% | 3.80% | 99.21% |
+| ResNet-34 (PGD) | ResNet-34 | 0.20% | 1.00% | 99.74% |
+| ResNet-34 (Patch) | ResNet-34 | 7.00% | 10.20% | 90.79% |
+| ResNet-34 (Original) | DenseNet-121 | 75.60% | 93.60% | - |
+| ResNet-34 (FGSM) | DenseNet-121 | 6.80% | 11.40% | 91.25% |
+| ResNet-34 (PGD) | DenseNet-121 | 7.00% | 12.00% | 90.50% |
+| ResNet-34 (Patch) | DenseNet-121 | 8.00% | 12.00% | 97.97% |
+
+
 **Notable Findings:**
 - Patch attacks showed the highest transferability (97.97%)
 - All attack types achieved >90% transfer rates
@@ -151,13 +206,10 @@ Patch Transferability Rate: 97.97%
 ## Project Structure
 ```
 neural-network-jailbreak/
-├── TestDataSet/                  # Original test images
-├── AdversarialTestSet1/          # FGSM adversarial examples
-├── AdversarialTestSet2/          # PGD adversarial examples
-├── AdversarialTestSet3/          # Patch attack adversarial examples
+├── images
 ├── script.ipynb                  # Main implementation notebook
 ├── script_executed.ipynb         # Executed notebook with outputs
-├── accuracies.txt                # Accuracy results for all experiments
+├── accuracy_results.txt                # Accuracy results for all experiments
 ├── report.pdf                    # Research paper summarizing findings
 └── README.md                     # Project documentation
 ```
